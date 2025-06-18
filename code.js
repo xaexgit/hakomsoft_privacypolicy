@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Event listener for the "View Chinese Version" link
     if (chineseLink) {
-        chineseLink.addEventListener('click', function (event) {
+        chineseLink.addEventListener('click', function(event) {
             event.preventDefault(); // Prevent the link from navigating
             openModal();
         });
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Event listener to close the modal if the user clicks on the overlay (outside the content)
     if (modal) {
-        modal.addEventListener('click', function (event) {
+        modal.addEventListener('click', function(event) {
             // If the clicked element is the overlay itself, not its children
             if (event.target === modal) {
                 closeModal();
@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Event listener to close the modal with the 'Escape' key for accessibility
-    document.addEventListener('keydown', function (event) {
+    document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape' && modal && modal.style.display === 'flex') {
             closeModal();
         }
