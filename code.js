@@ -1,4 +1,3 @@
-
 function createParticles() {
     const particlesContainer = document.getElementById('particles');
 
@@ -124,8 +123,64 @@ document.addEventListener('DOMContentLoaded', function () {
     handleScrollAnimations();
     initSmoothScrolling();
 
-
     window.addEventListener('resize', handleResize);
+
+    // --- START: Chinese Policy Modal Logic ---
+
+    // Get the required elements from the DOM
+    const chineseLink = document.querySelector('a[lang="zh"]');
+    const modal = document.getElementById('chinese-policy-modal');
+    const closeButton = document.getElementById('close-chinese-policy');
+
+    // Function to open the modal
+    function openModal() {
+        if (modal) {
+            modal.style.display = 'flex';
+            // Prevent body from scrolling when modal is open
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    // Function to close the modal
+    function closeModal() {
+        if (modal) {
+            modal.style.display = 'none';
+            // Restore body scrolling
+            document.body.style.overflow = '';
+        }
+    }
+
+    // Event listener for the "View Chinese Version" link
+    if (chineseLink) {
+        chineseLink.addEventListener('click', function (event) {
+            event.preventDefault(); // Prevent the link from navigating
+            openModal();
+        });
+    }
+
+    // Event listener for the close button
+    if (closeButton) {
+        closeButton.addEventListener('click', closeModal);
+    }
+
+    // Event listener to close the modal if the user clicks on the overlay (outside the content)
+    if (modal) {
+        modal.addEventListener('click', function (event) {
+            // If the clicked element is the overlay itself, not its children
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+    }
+
+    // Event listener to close the modal with the 'Escape' key for accessibility
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && modal && modal.style.display === 'flex') {
+            closeModal();
+        }
+    });
+
+    // --- END: Chinese Policy Modal Logic ---
 });
 
 let ticking = false;
