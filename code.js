@@ -1,17 +1,39 @@
-// Create floating particles
+
 function createParticles() {
     const particlesContainer = document.getElementById('particles');
-    for (let i = 0; i < 50; i++) {
+
+    let particleCount;
+    if (window.innerWidth < 480) {
+        particleCount = 15; // Mobile phones
+    } else if (window.innerWidth < 768) {
+        particleCount = 25; // Tablets
+    } else if (window.innerWidth < 1200) {
+        particleCount = 40; // Desktop
+    } else {
+        particleCount = 50; // Large screens
+    }
+
+
+    if (particlesContainer) {
+        particlesContainer.innerHTML = '';
+    }
+
+    for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
         particle.style.left = Math.random() * 100 + '%';
         particle.style.animationDelay = Math.random() * 15 + 's';
         particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
-        particlesContainer.appendChild(particle);
+
+
+        if (particlesContainer) {
+            particlesContainer.appendChild(particle);
+        } else {
+            document.body.appendChild(particle);
+        }
     }
 }
 
-// Scroll animations
 function handleScrollAnimations() {
     const sections = document.querySelectorAll('.policy-section');
     const observer = new IntersectionObserver((entries) => {
@@ -21,8 +43,8 @@ function handleScrollAnimations() {
             }
         });
     }, {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
+        threshold: window.innerWidth < 768 ? 0.05 : 0.1,
+        rootMargin: '0px 0px -30px 0px'
     });
 
     sections.forEach(section => {
@@ -30,53 +52,140 @@ function handleScrollAnimations() {
     });
 }
 
-// Smooth scrolling for anchor links
+
 function initSmoothScrolling() {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                behavior: 'smooth'
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+}
+
+
+function initParallaxEffect() {
+
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+        document.addEventListener('mousemove', (e) => {
+            const cards = document.querySelectorAll('.policy-section');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+
+            cards.forEach((card, index) => {
+                const speed = (index + 1) * 0.3;
+                const rotateX = (y - 0.5) * speed;
+                const rotateY = (x - 0.5) * speed;
+
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
             });
         });
-    });
-}
 
-// Mouse parallax effect
-function initParallaxEffect() {
-    document.addEventListener('mousemove', (e) => {
-        const cards = document.querySelectorAll('.policy-section');
-        const x = e.clientX / window.innerWidth;
-        const y = e.clientY / window.innerHeight;
-
-        cards.forEach((card, index) => {
-            const speed = (index + 1) * 0.5;
-            const rotateX = (y - 0.5) * speed;
-            const rotateY = (x - 0.5) * speed;
-            
-            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        document.addEventListener('mouseleave', () => {
+            const cards = document.querySelectorAll('.policy-section');
+            cards.forEach(card => {
+                card.style.transform = '';
+            });
         });
-    });
+    }
 }
 
-// Initialize all effects
-document.addEventListener('DOMContentLoaded', function() {
-    createParticles();
+
+function handleResize() {
+
+    clearTimeout(window.resizeTimer);
+    window.resizeTimer = setTimeout(() => {
+
+        createParticles();
+
+
+        if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+            initParallaxEffect();
+        }
+    }, 250);
+}
+
+function respectsReducedMotion() {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    if (!respectsReducedMotion()) {
+        createParticles();
+        initParallaxEffect();
+    }
+
     handleScrollAnimations();
     initSmoothScrolling();
-    initParallaxEffect();
+
+
+    window.addEventListener('resize', handleResize);
 });
 
-// Performance optimization
 let ticking = false;
+let lastScrollY = 0;
+
 function updateParallax() {
-    // Parallax updates
+
+    if (lastScrollY !== window.scrollY) {
+        lastScrollY = window.scrollY;
+
+    }
     ticking = false;
 }
 
-document.addEventListener('scroll', function() {
-    if (!ticking) {
+
+document.addEventListener('scroll', function () {
+    if (!ticking && !respectsReducedMotion()) {
         requestAnimationFrame(updateParallax);
         ticking = true;
     }
 });
+
+
+document.addEventListener('focusin', function () {
+    if (respectsReducedMotion()) {
+        document.body.style.setProperty('--animation-play-state', 'paused');
+    }
+});
+
+document.addEventListener('focusout', function () {
+    document.body.style.setProperty('--animation-play-state', 'running');
+});
+
+
+if ('ontouchstart' in window) {
+
+    document.body.classList.add('touch-device');
+
+
+    const originalCreateParticles = createParticles;
+    createParticles = function () {
+        const particlesContainer = document.getElementById('particles');
+        const particleCount = window.innerWidth < 768 ? 8 : 15;
+
+        if (particlesContainer) {
+            particlesContainer.innerHTML = '';
+        }
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+
+            if (particlesContainer) {
+                particlesContainer.appendChild(particle);
+            } else {
+                document.body.appendChild(particle);
+            }
+        }
+    };
+}
