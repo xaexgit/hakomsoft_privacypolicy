@@ -690,7 +690,8 @@ footer p:last-child {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: clamp(15px, 3vw, 25px);
+    gap: clamp(10px, 2.5vw, 20px);
+    /* MODIFIED: Reduced gap for smaller screens */
     flex-wrap: wrap;
     margin: 0 auto;
     max-width: 100%;
@@ -700,8 +701,10 @@ footer p:last-child {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: clamp(45px, 8vw, 60px);
-    height: clamp(45px, 8vw, 60px);
+    width: clamp(40px, 8vw, 60px);
+    /* MODIFIED: Reduced minimum width */
+    height: clamp(40px, 8vw, 60px);
+    /* MODIFIED: Reduced minimum height */
     border-radius: 50%;
     text-decoration: none;
     font-size: clamp(1.2rem, 3vw, 1.8rem);
@@ -711,8 +714,10 @@ footer p:last-child {
     backdrop-filter: blur(10px);
     border: 1px solid var(--glass-border);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-    min-width: 44px;
-    min-height: 44px;
+    min-width: 40px;
+    /* MODIFIED: Reduced min-width to match clamp */
+    min-height: 40px;
+    /* MODIFIED: Reduced min-height to match clamp */
 }
 
 .social-link::before {
